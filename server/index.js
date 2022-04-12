@@ -70,8 +70,21 @@ app.get('/', (req, res, next) => {
   res.sendFile(path.join(__dirname, './build/index.html'));
 });
 
-app.get('/abc', (req, res, next) => {
-  res.send('ABC');
+//Production Route double check
+const checkScope = (req, res, next) => {
+  if (req.authInfo.checkLocalScope('read')) {
+    next();
+  } else {
+    res.status(403).end('Forbidden');
+  }
+};
+
+app.get('/getemplist', checkScope, (req, res, next) => {
+  const result = [];
+  for (let emp in empl_list) {
+    result.push(empl_list[emp]);
+  }
+  res.send(result);
 });
 
 /** **************DEFAULT API ENDPOINT*************** */
