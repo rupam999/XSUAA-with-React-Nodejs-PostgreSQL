@@ -5,6 +5,10 @@
     {
       "name": "$XSAPPNAME.read",
       "description": "Role to read data"
+    },
+    {
+      "name": "$XSAPPNAME.adminRT",
+      "description": "Role to perform admin task"
     }
   ],
   "role-templates": [
@@ -12,6 +16,11 @@
       "name": "viewer",
       "description": "Viewer Role",
       "scope-references": ["$XSAPPNAME.read"]
+    },
+    {
+      "name": "editor",
+      "description": "Admin Role",
+      "scope-references": ["$XSAPPNAME.adminRT"]
     }
   ],
   "role-collections": [
@@ -19,6 +28,11 @@
       "name": "employeeReadRoleCollections",
       "description": "Employee Role Collection",
       "role-template-references": ["$XSAPPNAME.viewer"]
+    },
+    {
+      "name": "employeeEditorRoleCollections",
+      "description": "Employee Admin Collection",
+      "role-template-references": ["$XSAPPNAME.editor"]
     }
   ]
 }
