@@ -1,0 +1,15 @@
+.mainNav {
+  display: flex;
+  justify-content: space-between;
+  margin: auto 10%;
+  height: 45px;
+}
+
+.navLink a {
+  font-size: 1.6rem;
+  font-weight: 550;
+  color: #000;
+  padding-right: 25px;
+  line-height: 40px;
+  align-self: center;
+}

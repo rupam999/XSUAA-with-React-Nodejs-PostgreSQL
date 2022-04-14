@@ -40,6 +40,12 @@ app.use(
 );
 app.options('*', cors());
 
+/** **************DOTENV*************** */
+dotenv.config({
+  path: path.join(__dirname, '.env'),
+});
+
+/** **************REQUEST LOG*************** */
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 } else {
@@ -54,10 +60,6 @@ if (process.env.NODE_ENV === 'development') {
     ),
   );
 }
-/** **************DOTENV*************** */
-dotenv.config({
-  path: path.join(__dirname, '.env'),
-});
 
 app.set('host', process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0');
 app.set('port', process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8000);

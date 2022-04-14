@@ -2,41 +2,6 @@ import React from 'react';
 import { useTable } from 'react-table';
 import Classes from './Table.module.css';
 
-// This could be inlined into SubRowAsync, this this lets you reuse it across tables
-export const SubRows = ({ row, rowProps, visibleColumns, data, loading }) => {
-  if (loading) {
-    return (
-      <tr>
-        <td />
-        <td colSpan={visibleColumns.length - 1}>Loading...</td>
-      </tr>
-    );
-  }
-
-  // error handling here
-
-  return (
-    <>
-      {data.map((x, i) => {
-        return (
-          <tr {...rowProps} key={`${rowProps.key}-expanded-${i}`}>
-            {row.cells.map((cell) => {
-              return (
-                <td {...cell.getCellProps()}>
-                  {cell.render(cell.column.SubCell ? 'SubCell' : 'Cell', {
-                    value: cell.column.accessor && cell.column.accessor(x, i),
-                    row: { ...row, original: x },
-                  })}
-                </td>
-              );
-            })}
-          </tr>
-        );
-      })}
-    </>
-  );
-};
-
 // A simple way to support a renderRowSubComponent is to make a render prop
 // This is NOT part of the React Table API, it's merely a rendering
 // option we are creating for ourselves in our table renderer
@@ -62,6 +27,7 @@ const Table = ({
     expand, // We can useExpanded to track the expanded state
     // for sub components too!
   );
+
   return (
     <>
       <table {...getTableProps()} className={Classes.mainTable}>
