@@ -1,12 +1,15 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import logger from 'morgan';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 import cors from 'cors';
 import dotenv from 'dotenv';
 // Error Handler for Dev
 import errorHandler from 'errorhandler';
+// Logger
+import logger from './logger/index.js';
+import morgan from 'morgan';
 // XSUAA Auth
 import { JWTStrategy } from '@sap/xssec';
 import xsenv from '@sap/xsenv';
@@ -18,9 +21,9 @@ import client from './db/index.js';
 
 try {
   client.connect();
-  console.log('CONNECTED');
+  logger.info('DB CONNECTED');
 } catch (err) {
-  console.log(err);
+  logger.error('Database connection error', err);
 }
 
 const app = express();
@@ -37,6 +40,20 @@ app.use(
 );
 app.options('*', cors());
 
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+} else {
+  app.use(
+    morgan(
+      ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" :response-time ms',
+      {
+        stream: fs.createWriteStream(path.join(__dirname, 'access.log'), {
+          flags: 'a',
+        }),
+      },
+    ),
+  );
+}
 /** **************DOTENV*************** */
 dotenv.config({
   path: path.join(__dirname, '.env'),
@@ -45,7 +62,6 @@ dotenv.config({
 app.set('host', process.env.OPENSHIFT_NODEJS_IP || '0.0.0.0');
 app.set('port', process.env.PORT || process.env.OPENSHIFT_NODEJS_PORT || 8000);
 
-app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(
   bodyParser.urlencoded({
@@ -70,23 +86,6 @@ app.get('/', (req, res, next) => {
   res.sendFile(path.join(__dirname, './build/index.html'));
 });
 
-//Production Route double check
-const checkScope = (req, res, next) => {
-  if (req.authInfo.checkLocalScope('read')) {
-    next();
-  } else {
-    res.status(403).end('Forbidden');
-  }
-};
-
-app.get('/getemplist', checkScope, (req, res, next) => {
-  const result = [];
-  for (let emp in empl_list) {
-    result.push(empl_list[emp]);
-  }
-  res.send(result);
-});
-
 /** **************DEFAULT API ENDPOINT*************** */
 app.use('/api', router);
 
@@ -96,12 +95,12 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 app.listen(app.get('port'), () => {
-  console.log(
-    'Node.js App is running at http://localhost:%d',
-    app.get('port'),
-    app.get('env'),
+  logger.info(
+    `Node.js App is running at http://localhost:${app.get('port')} in ${app.get(
+      'env',
+    )} server`,
   );
-  console.log('Press CTRL-C to stop\n');
+  logger.info('Press CTRL-C to stop\n');
 });
 
 /** ************************************************************ */
@@ -111,7 +110,7 @@ dummyData(router);
 
 // Serving react on routes unused by previous routing
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../client/build/index.html'));
+  res.sendFile(path.join(__dirname, './build/index.html'));
 });
 
 export default app;

@@ -1,6 +1,7 @@
 import pkg from 'pg';
 
 import { createRequire } from 'module';
+import logger from '../logger/index.js';
 // Bring in the ability to create the 'require' method
 const require = createRequire(import.meta.url); // construct the require method
 const env = require('../default-env.json');
@@ -18,7 +19,7 @@ try {
   data.password = cred.password;
   data.ca = cred.sslrootcert;
 } catch (error) {
-  console.log(error);
+  logger.error('Database connection in DB config', error);
 }
 
 const client = new Client({
@@ -32,7 +33,5 @@ const client = new Client({
     ca: data.ca,
   },
 });
-
-// console.log({ data });
 
 export default client;

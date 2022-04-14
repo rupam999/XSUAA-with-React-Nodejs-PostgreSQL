@@ -1,11 +1,12 @@
 import client from '../db/index.js';
+import logger from '../logger/index.js';
 
 export const getDummyData = async (req, res) => {
   client.query('SELECT version();', (err, result) => {
     if (!err) {
       res.send(result.rows);
     } else {
-      console.log(err);
+      logger.error('getDummyData Error', err);
     }
   });
   // eslint-disable-next-line no-unused-expressions
