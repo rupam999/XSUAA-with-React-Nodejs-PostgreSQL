@@ -8,7 +8,7 @@ import { checkAdminScope, checkPublicScope } from '../middleware/index.js';
 
 export const dummyData = (router) => {
   router.get('/dummy', getDummyData);
-  router.get('/public', checkPublicScope, publicRoute);
-  router.get('/admin', checkAdminScope, adminRoute);
+  router.get('/public', publicRoute);
+  router.get('/admin', adminRoute);
   router.get('/general', generalRoute);
 };

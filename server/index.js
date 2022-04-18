@@ -16,6 +16,7 @@ import xsenv from '@sap/xsenv';
 import passport from 'passport';
 // Routes
 import { dummyData } from './routes/dummy.js';
+import { tableData } from './routes/tableData.js';
 // DB
 import client from './db/index.js';
 
@@ -109,6 +110,7 @@ app.listen(app.get('port'), () => {
 /** **********************ALL Routes*************************** */
 /** ********************************************************** */
 dummyData(router);
+tableData(router);
 
 // Serving react on routes unused by previous routing
 app.get('*', (req, res) => {

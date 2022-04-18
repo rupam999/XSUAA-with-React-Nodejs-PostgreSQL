@@ -1,3 +1,5 @@
+import winston from 'winston';
+
 const { createLogger, format, transports } = winston;
 const { combine, timestamp, label, printf, colorize } = format;
 

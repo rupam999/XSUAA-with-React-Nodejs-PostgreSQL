@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useExpanded } from 'react-table';
 import Table from '../../components/Table';
+import getMasterNodeData from '../../api/getMasterNodeData';
 
 const data = [
   {
@@ -58,12 +59,12 @@ const SubRowAsync = ({ row, rowProps, visibleColumns }) => {
     const timer = setTimeout(() => {
       setData([
         {
-          firstName: 'Ram',
-          lastName: 'Sam',
+          node_name: 'Ram',
+          node_number: 'Sam',
         },
         {
-          firstName: 'Kan',
-          lastName: 'Ban',
+          node_name: 'SakAm',
+          node_number: 'Sam',
         },
       ]);
       setLoading(false);
@@ -86,6 +87,21 @@ const SubRowAsync = ({ row, rowProps, visibleColumns }) => {
 };
 
 const FullNodeTable = () => {
+  const [mainData, setMainData] = useState([]);
+
+  const getMasterNodeDataApi = async () => {
+    try {
+      const response = await getMasterNodeData();
+      setMainData(response);
+    } catch (error) {
+      console.log('Dummy Data', error);
+    }
+  };
+
+  useEffect(() => {
+    getMasterNodeDataApi();
+  }, []);
+
   const columns = useMemo(
     () => [
       {
@@ -107,13 +123,13 @@ const FullNodeTable = () => {
       {
         Header: 'First Name',
         // We re-map data using accessor functions for subRows
-        accessor: (d) => d.firstName,
+        accessor: (d) => d.node_name,
         // We can render something different for subRows
-        SubCell: (cellProps) => <>{cellProps.value}</>,
+        // SubCell: (cellProps) => <>{cellProps.value}</>,
       },
       {
         Header: 'Last Name',
-        accessor: (d) => d.lastName,
+        accessor: (d) => d.node_number,
       },
     ],
     [],
@@ -136,7 +152,7 @@ const FullNodeTable = () => {
   return (
     <Table
       columns={columns}
-      data={data}
+      data={mainData ? mainData : data}
       renderRowSubComponent={renderRowSubComponent}
       expand={useExpanded}
     />
